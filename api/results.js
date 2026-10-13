@@ -15,24 +15,28 @@ export default async function handler(req, res) {
 
   // 1. playId UUID 형식 검증
   if (!playId || typeof playId !== 'string' || !UUID_REGEX.test(playId)) {
-    return res.status(400).json({ error: '잘못된 결과 데이터예요.' });
+    console.error('[API /results] 검증 실패 - playId:', playId);
+    return res.status(400).json({ error: '잘못된 결과 데이터예요 (playId).' });
   }
 
   // 2. roundSize 유효성 및 후보 수 이하인지 검증
   const roundNum = Number(roundSize);
   if (!VALID_ROUND_SIZES.includes(roundNum) || roundNum > CANDIDATES.length) {
-    return res.status(400).json({ error: '잘못된 결과 데이터예요.' });
+    console.error('[API /results] 검증 실패 - roundSize:', roundNum);
+    return res.status(400).json({ error: '잘못된 결과 데이터예요 (roundSize).' });
   }
 
   // 3. matches 배열 및 길이 검증 (roundSize - 1)
   if (!Array.isArray(matches) || matches.length !== roundNum - 1) {
-    return res.status(400).json({ error: '잘못된 결과 데이터예요.' });
+    console.error('[API /results] 검증 실패 - matches length:', matches?.length, 'expected:', roundNum - 1);
+    return res.status(400).json({ error: '잘못된 결과 데이터예요 (matches).' });
   }
 
   // 4. 모든 id가 CANDIDATES에 존재하는지 검증
   const candidateIdSet = new Set(CANDIDATES.map((c) => c.id));
   if (!candidateIdSet.has(championId)) {
-    return res.status(400).json({ error: '잘못된 결과 데이터예요.' });
+    console.error('[API /results] 검증 실패 - championId:', championId);
+    return res.status(400).json({ error: '잘못된 결과 데이터예요 (championId).' });
   }
 
   for (const match of matches) {
@@ -43,14 +47,16 @@ export default async function handler(req, res) {
       !candidateIdSet.has(match.loserId) ||
       match.winnerId === match.loserId
     ) {
-      return res.status(400).json({ error: '잘못된 결과 데이터예요.' });
+      console.error('[API /results] 검증 실패 - match record:', match);
+      return res.status(400).json({ error: '잘못된 결과 데이터예요 (match detail).' });
     }
   }
 
   // 5. 결승 매치(round === 2)의 winnerId가 championId와 일치하는지 검증
   const finalMatch = matches[matches.length - 1];
   if (!finalMatch || Number(finalMatch.round) !== 2 || finalMatch.winnerId !== championId) {
-    return res.status(400).json({ error: '잘못된 결과 데이터예요.' });
+    console.error('[API /results] 검증 실패 - finalMatch:', finalMatch, 'championId:', championId);
+    return res.status(400).json({ error: '잘못된 결과 데이터예요 (finalMatch).' });
   }
 
   // 6. DB 저장 (save_play RPC 호출)

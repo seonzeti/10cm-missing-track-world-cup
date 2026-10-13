@@ -232,11 +232,11 @@ async function submitSaveResult(payload) {
     if (res.saved || res.duplicate) {
       resultSaveStatus.textContent = '결과가 저장되었어요!';
     } else {
-      throw new Error();
+      throw new Error('저장 처리에 실패했습니다.');
     }
   } catch (err) {
     console.error('결과 저장 실패:', err);
-    resultSaveStatus.textContent = '저장에 실패했어요.';
+    resultSaveStatus.textContent = `저장에 실패했어요: ${err.message || '네트워크 오류'}`;
     btnRetrySave.hidden = false;
   }
 }

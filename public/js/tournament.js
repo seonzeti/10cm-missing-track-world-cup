@@ -41,8 +41,25 @@ export function createTournament(candidateIds, roundSize) {
   const shuffledAll = shuffle(candidateIds);
   const selected = shuffledAll.slice(0, roundSize);
 
+  let playId = '';
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    try {
+      playId = crypto.randomUUID();
+    } catch {
+      playId = '';
+    }
+  }
+
+  if (!playId) {
+    playId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
+
   return {
-    playId: crypto.randomUUID(),
+    playId,
     roundSize,
     current: selected, // 순서 = 대진
     next: [],
