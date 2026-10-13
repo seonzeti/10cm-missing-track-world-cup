@@ -20,7 +20,13 @@
     <!-- Header: Festival Banner & Sponsor Bar -->
     <header class="festival-header">
       <div class="header-top">
-        <span class="concert-label">2026 10CM FAN CONCERT</span>
+        <button id="btn-header-logo" type="button" class="header-logo-btn" aria-label="메인 화면으로 이동" title="메인 화면으로 이동">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="home-icon">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span class="concert-label">2026 10CM FAN CONCERT</span>
+        </button>
         <div class="sponsor-bar" aria-label="Sponsors">
           <span>10CM</span>
           <span>·</span>
@@ -217,7 +223,12 @@
       <!-- 4. 누적 순위 화면 -->
       <section id="screen-ranking" data-screen hidden>
         <div class="ranking-header">
-          <div class="case-file-badge">ARCHIVE · ALL CASES</div>
+          <div class="ranking-top-nav">
+            <button id="btn-ranking-top-back" type="button" class="btn-top-back">
+              ← 메인으로
+            </button>
+            <div class="case-file-badge">ARCHIVE · ALL CASES</div>
+          </div>
           <h2 id="ranking-title" class="ranking-title">전체 팬 누적 순위</h2>
           <p id="ranking-total" class="ranking-total-text">지금까지 0번의 월드컵이 열렸어요</p>
         </div>

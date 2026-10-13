@@ -494,6 +494,24 @@ function setupEventListeners() {
     showScreen('screen-start');
   });
 
+  // 상단 메인 로고 클릭 시 언제든 메인(시작 화면)으로 복귀
+  const btnHeaderLogo = document.getElementById('btn-header-logo');
+  if (btnHeaderLogo) {
+    btnHeaderLogo.addEventListener('click', () => {
+      showScreen('screen-start');
+      renderRoundOptions();
+    });
+  }
+
+  // 순위 화면 상단 "← 메인으로" 버튼
+  const btnRankingTopBack = document.getElementById('btn-ranking-top-back');
+  if (btnRankingTopBack) {
+    btnRankingTopBack.addEventListener('click', () => {
+      showScreen('screen-start');
+      renderRoundOptions();
+    });
+  }
+
   // 결과 이미지 다운로드
   if (btnDownloadImage) {
     btnDownloadImage.addEventListener('click', downloadResultCard);
