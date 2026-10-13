@@ -82,12 +82,6 @@ export const CANDIDATES = [
     image: '/images/candidates/s13.jpg'
   },
   {
-    id: 's14',
-    title: '봄이 좋냐?? (Rock Ver.)',
-    description: '',
-    image: '/images/candidates/s14.jpg'
-  },
-  {
     id: 's15',
     title: "Don't Let Me Go",
     description: '',
@@ -122,12 +116,6 @@ export const CANDIDATES = [
     title: '그러니까…',
     description: '',
     image: '/images/candidates/s20.jpg'
-  },
-  {
-    id: 's21',
-    title: '스토커',
-    description: '',
-    image: '/images/candidates/s21.jpg'
   },
   {
     id: 's22',

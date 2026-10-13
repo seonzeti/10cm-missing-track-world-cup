@@ -702,13 +702,22 @@ progress::-moz-progress-bar {
   margin: 0 auto;
 }
 
-.result-action-subgroup {
+.result-action-share-group {
   display: flex;
   gap: 10px;
+  width: 100%;
 }
 
-.result-action-subgroup .btn {
+.result-action-share-group .btn {
   flex: 1;
+  font-size: 14px;
+  padding: 14px 16px;
+}
+
+@media (max-width: 440px) {
+  .result-action-share-group {
+    flex-direction: column;
+  }
 }
 
 /* ==========================================================================
