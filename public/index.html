@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>10CM 팬콘 무대 월드컵 — THE MISSING TRACKS</title>
+  <meta name="description" content="10CM 팬콘서트 무대를 1:1로 비교해 나만의 최애 무대를 뽑고 전체 팬들의 누적 순위를 확인해보세요.">
+  
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header: Festival Banner & Sponsor Bar -->
+    <header class="festival-header">
+      <div class="header-top">
+        <span class="concert-label">2026 10CM FAN CONCERT</span>
+        <div class="sponsor-bar" aria-label="Sponsors">
+          <span>10CM</span>
+          <span>·</span>
+          <span>CAM</span>
+          <span>·</span>
+          <span>Wonderwall.</span>
+          <span>·</span>
+          <span>fromm</span>
+          <span>·</span>
+          <span>FREAK</span>
+        </div>
+      </div>
+      <div class="header-divider"></div>
+    </header>
+
+    <main class="main-content">
+      <!-- 1. 시작 화면 -->
+      <section id="screen-start" data-screen>
+        <div class="case-file-badge">FILE No. 2026 · THE MISSING TRACKS · CASE OPEN</div>
+        
+        <!-- Emblem Lockup -->
+        <div class="emblem-lockup" aria-hidden="true">
+          <div class="glasses-icon">
+            <svg width="44" height="24" viewBox="0 0 44 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="10" cy="12" r="8" />
+              <circle cx="34" cy="12" r="8" />
+              <path d="M18 12h8" />
+              <path d="M2 12h0" />
+              <path d="M42 12h0" />
+            </svg>
+          </div>
+          <p class="emblem-line1">FESTIVAL DE CENTINERS</p>
+          <p class="emblem-line2">2026 OFFICIAL SELECTION</p>
+          <p class="emblem-line3">THE MISSING TRACKS</p>
+        </div>
+
+        <div class="title-wrap">
+          <span class="sub-title">2026 10CM FAN CONCERT</span>
+          <h1 id="start-title" class="display-title">
+            <span class="title-the">THE</span>
+            <span class="title-tracks"><span class="highlight-signal">MISSING</span> TRACKS</span>
+            <span class="title-kr">10CM 팬콘 무대 월드컵</span>
+          </h1>
+        </div>
+
+        <p id="start-desc" class="desc-text">
+          두 무대 중 더 좋은 무대를 골라 나만의 최애 무대를 뽑아보세요!
+        </p>
+
+        <div class="case-info-strip">
+          <span>CASE No. 1009–1011</span>
+          <span>·</span>
+          <span>OCTOBER 2026</span>
+          <span>·</span>
+          <span>OLYMPIC HALL</span>
+        </div>
+
+        <!-- Round Selection -->
+        <div class="round-select-section">
+          <div class="section-label">SELECT ROUND SIZE</div>
+          <div id="round-options" class="round-options" role="radiogroup" aria-label="강 선택">
+            <!-- Buttons dynamically populated by JS (e.g. 16강, 8강, 4강) -->
+            <button type="button" class="btn-round" data-size="16">16강</button>
+            <button type="button" class="btn-round" data-size="8">8강</button>
+            <button type="button" class="btn-round" data-size="4">4강</button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="start-actions">
+          <button id="btn-start" type="button" class="btn btn-primary" disabled>
+            시작하기
+          </button>
+          <button id="btn-go-ranking" type="button" class="btn btn-ghost">
+            누적 순위 보기
+          </button>
+        </div>
+
+        <div class="case-footer-narrative">
+          사라진 곡들의 흔적을 추적하는 10CM 팬들의 특별한 사건 기록부. 당신의 선택이 최종 누적 순위를 완성합니다.
+        </div>
+      </section>
+
+      <!-- 2. 대결 화면 -->
+      <section id="screen-match" data-screen hidden>
+        <div class="match-meta-bar">
+          <div class="match-meta-left">
+            <span class="status-badge">사건 진행 중</span>
+            <span id="match-progress" class="match-progress-text">16강 1/8</span>
+          </div>
+          <div class="match-meta-right">
+            <span>OLYMPIC HALL</span>
+          </div>
+        </div>
+
+        <div class="progress-bar-wrap">
+          <progress id="match-progress-bar" value="0" max="15"></progress>
+        </div>
+
+        <!-- 1:1 대결 카드 컨테이너 -->
+        <div class="match-cards-container">
+          <!-- Left Card -->
+          <button id="card-left" type="button" class="match-card" aria-label="왼쪽 무대 선택">
+            <div class="card-image-wrap">
+              <img class="card-image" src="" alt="후보 이미지" loading="eager">
+              <span class="card-tag">TRACK A</span>
+            </div>
+            <div class="card-info">
+              <h2 class="card-title">곡 제목</h2>
+              <p class="card-desc">무대 설명</p>
+            </div>
+          </button>
+
+          <!-- VS Indicator -->
+          <div id="match-vs" class="match-vs-divider">
+            <span class="vs-line"></span>
+            <span class="vs-text">VS</span>
+            <span class="vs-line"></span>
+          </div>
+
+          <!-- Right Card -->
+          <button id="card-right" type="button" class="match-card" aria-label="오른쪽 무대 선택">
+            <div class="card-image-wrap">
+              <img class="card-image" src="" alt="후보 이미지" loading="eager">
+              <span class="card-tag">TRACK B</span>
+            </div>
+            <div class="card-info">
+              <h2 class="card-title">곡 제목</h2>
+              <p class="card-desc">무대 설명</p>
+            </div>
+          </button>
+        </div>
+      </section>
+
+      <!-- 3. 결과 화면 -->
+      <section id="screen-result" data-screen hidden>
+        <div class="case-file-badge badge-closed">FILE CLOSED · CASE SOLVED</div>
+        
+        <h2 id="result-label" class="result-label">나의 최애 무대</h2>
+
+        <div class="result-card">
+          <div class="result-image-wrap">
+            <img id="result-image" src="" alt="우승 무대 이미지" loading="lazy">
+            <div class="champion-stamp">CHAMPION</div>
+          </div>
+          <div class="result-info">
+            <h3 id="result-title" class="result-title">우승 곡 제목</h3>
+            <p id="result-desc" class="result-desc">무대 설명</p>
+          </div>
+        </div>
+
+        <!-- AI Comment Box -->
+        <div class="ai-comment-card">
+          <div class="ai-comment-header">
+            <span class="ai-badge">AGENT NOTE</span>
+            <span class="ai-label">AI 코멘트</span>
+          </div>
+          <p id="result-ai-comment" class="ai-comment-text">AI가 한마디 준비 중이에요…</p>
+        </div>
+
+        <!-- Save Status -->
+        <div class="save-status-wrap">
+          <p id="result-save-status" class="save-status-text">결과를 저장하는 중…</p>
+          <button id="btn-retry-save" type="button" class="btn btn-retry" hidden>다시 시도</button>
+        </div>
+
+        <!-- Result Action Buttons -->
+        <div class="result-actions">
+          <button id="btn-result-ranking" type="button" class="btn btn-primary">
+            누적 순위 보기
+          </button>
+          <div class="result-action-subgroup">
+            <button id="btn-restart" type="button" class="btn btn-ghost">
+              다시하기
+            </button>
+            <button id="btn-share" type="button" class="btn btn-ghost">
+              링크 복사
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. 누적 순위 화면 -->
+      <section id="screen-ranking" data-screen hidden>
+        <div class="ranking-header">
+          <div class="case-file-badge">ARCHIVE · ALL CASES</div>
+          <h2 id="ranking-title" class="ranking-title">전체 팬 누적 순위</h2>
+          <p id="ranking-total" class="ranking-total-text">지금까지 0번의 월드컵이 열렸어요</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="ranking-empty" class="ranking-empty" hidden>
+          <p>아직 기록이 없어요. 첫 번째 월드컵을 시작해보세요!</p>
+        </div>
+
+        <!-- Ranking List -->
+        <ol id="ranking-list" class="ranking-list">
+          <!-- Dynamic populated by JS -->
+        </ol>
+
+        <div class="ranking-actions">
+          <button id="btn-ranking-back" type="button" class="btn btn-primary">
+            처음으로
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
