@@ -178,3 +178,47 @@ export function getProgress(state) {
 export function isFinished(state) {
   return state.championId !== null;
 }
+
+/**
+ * 1위부터 4위까지 후보 id 추출 (우승, 준우승, 3위, 4위)
+ * @param {object} state 
+ * @returns {{ firstId: string, secondId: string|null, thirdId: string|null, fourthId: string|null }|null}
+ */
+export function getTop4(state) {
+  if (!state || !state.championId) return null;
+
+  const firstId = state.championId;
+
+  // 결승전 매치 (round === 2)
+  const finalMatch = (state.matches || []).find((m) => m.round === 2);
+  const secondId = finalMatch ? finalMatch.loserId : null;
+
+  // 4강(준결승) 매치들 (round === 4)
+  const semiMatches = (state.matches || []).filter((m) => m.round === 4);
+  let thirdId = null;
+  let fourthId = null;
+
+  if (semiMatches.length >= 2) {
+    // 1위(우승자)와 준결승에서 맞붙었던 후보를 3위로, 준우승자와 맞붙었던 후보를 4위로 배치
+    const matchWithFirst = semiMatches.find((m) => m.winnerId === firstId);
+    const matchWithSecond = semiMatches.find((m) => m.winnerId === secondId);
+
+    if (matchWithFirst) {
+      thirdId = matchWithFirst.loserId;
+      fourthId = matchWithSecond ? matchWithSecond.loserId : semiMatches.map((m) => m.loserId).find((id) => id !== thirdId) || null;
+    } else {
+      const losers = semiMatches.map((m) => m.loserId);
+      thirdId = losers[0] || null;
+      fourthId = losers[1] || null;
+    }
+  } else if (semiMatches.length === 1) {
+    thirdId = semiMatches[0].loserId;
+  }
+
+  return {
+    firstId,
+    secondId,
+    thirdId,
+    fourthId
+  };
+}

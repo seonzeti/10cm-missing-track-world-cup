@@ -411,32 +411,35 @@ section[data-screen][hidden] {
 }
 
 /* ==========================================================================
-   Screen 2: Match Screen (대결 화면)
+   Screen 2: Match Screen (대결 화면: 모바일 스크롤 0px & 한눈에 100% 들어오는 뷰포트 피팅)
    ========================================================================== */
 #screen-match {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  min-height: calc(100dvh - 70px);
-  max-height: calc(100dvh - 70px);
+  justify-content: space-between;
+  height: calc(100dvh - 56px);
+  max-height: calc(100dvh - 56px);
+  min-height: 0;
   overflow: hidden;
-  padding-bottom: 10px;
+  padding: 4px 0 8px;
+  box-sizing: border-box;
 }
 
 .match-meta-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0 6px;
+  padding: 4px 0;
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--paper-dim);
+  flex-shrink: 0;
 }
 
 .match-meta-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .status-badge {
@@ -450,14 +453,15 @@ section[data-screen][hidden] {
 .match-progress-text {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--paper);
   letter-spacing: 0.05em;
 }
 
 .progress-bar-wrap {
   width: 100%;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
 }
 
 progress {
@@ -482,24 +486,26 @@ progress::-moz-progress-bar {
   background-color: var(--signal);
 }
 
-/* Match Cards Container (모바일: 1:1 좌우 나란히 배치, 스크롤 0px) */
+/* Match Cards Container (1:1 좌우 완벽 분할, 세로 100% 뷰포트 피팅) */
 .match-cards-container {
   display: flex;
   flex-direction: row;
   gap: 8px;
-  align-items: stretch;
+  align-items: center;
   justify-content: center;
   width: 100%;
   flex: 1;
   min-height: 0;
   position: relative;
-  margin: auto 0;
+  margin: 0;
 }
 
 .match-card {
   flex: 1;
   min-width: 0;
   max-width: calc(50% - 4px);
+  height: auto;
+  max-height: calc(100dvh - 100px);
   background-color: var(--ink-soft);
   border: 1px solid var(--line);
   border-radius: 0;
@@ -508,6 +514,7 @@ progress::-moz-progress-bar {
   text-align: left;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   color: inherit;
   transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
   position: relative;
@@ -535,23 +542,25 @@ progress::-moz-progress-bar {
   background-color: #24221a;
 }
 
+/* 이미지 래퍼: 정밀 3:4 비율 포스터 프레임 (절대 잘리지 않고 한눈에 100% 들어옴) */
 .card-image-wrap {
   position: relative;
   width: 100%;
   aspect-ratio: 3 / 4;
-  background-color: #111;
+  background-color: #0d0d0c;
   overflow: hidden;
-  flex: 1;
-  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain; /* 사진 상하좌우가 절대 잘리지 않고 온전하게 100% 표시 */
   display: block;
-  filter: contrast(108%) brightness(92%);
-  transition: transform 0.3s ease;
+  filter: contrast(106%) brightness(95%);
+  transition: transform 0.2s ease;
 }
 
 .match-card:hover .card-image {
@@ -560,30 +569,33 @@ progress::-moz-progress-bar {
 
 .card-tag {
   position: absolute;
-  top: 8px;
-  left: 8px;
-  background: rgba(10, 10, 10, 0.88);
+  top: 6px;
+  left: 6px;
+  background: rgba(10, 10, 10, 0.9);
   border: 1px solid var(--line);
-  padding: 2px 6px;
+  padding: 2px 5px;
   font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.1em;
   color: var(--paper);
+  z-index: 2;
 }
 
 .card-info {
-  padding: 10px 8px;
+  padding: 6px 4px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 48px;
+  min-height: 40px;
   background-color: var(--ink-soft);
+  border-top: 1px solid var(--line);
+  flex-shrink: 0;
 }
 
 .card-title {
   font-family: var(--font-base);
   font-weight: 700;
-  font-size: clamp(12px, 3.4vw, 15px);
+  font-size: clamp(11px, 3.2vw, 15px);
   letter-spacing: -0.01em;
   color: var(--paper);
   text-align: center;
@@ -599,17 +611,17 @@ progress::-moz-progress-bar {
   display: none;
 }
 
-/* VS Indicator (모바일: 카드 정중앙 플로팅 배지) */
+/* VS Indicator (두 카드 정중앙 플로팅 배지) */
 .match-vs-divider {
   position: absolute;
   left: 50%;
-  top: 40%;
+  top: 45%;
   transform: translate(-50%, -50%);
-  z-index: 5;
+  z-index: 6;
   pointer-events: none;
   background: rgba(10, 10, 10, 0.94);
   border: 1px solid var(--signal);
-  padding: 3px 9px;
+  padding: 3px 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
 }
 
@@ -620,7 +632,7 @@ progress::-moz-progress-bar {
 .match-vs-divider .vs-text {
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--signal);
   letter-spacing: 0.1em;
 }
@@ -695,6 +707,132 @@ progress::-moz-progress-bar {
 .result-desc {
   font-size: 14px;
   color: var(--paper-dim);
+}
+
+/* TOP 4 Podium Ranking in Result Screen */
+.result-top4-wrap {
+  max-width: 360px;
+  margin: 0 auto 20px;
+  background-color: var(--ink-soft);
+  border: 1px solid var(--line);
+  text-align: left;
+}
+
+.result-top4-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.result-top4-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--signal);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.result-top4-title {
+  font-family: var(--font-base);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--paper);
+  margin: 0;
+}
+
+.result-top4-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.top4-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  transition: background-color 0.15s ease;
+}
+
+.top4-item:last-child {
+  border-bottom: none;
+}
+
+.top4-item:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.top4-rank-badge {
+  font-family: var(--font-display);
+  font-size: 11px;
+  padding: 3px 6px;
+  min-width: 38px;
+  text-align: center;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.top4-rank-1 {
+  background-color: var(--signal);
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.top4-rank-2 {
+  background-color: #d8d4c8;
+  color: #111;
+  font-weight: 800;
+}
+
+.top4-rank-3 {
+  background-color: #a77c5c;
+  color: #fff;
+  font-weight: 700;
+}
+
+.top4-rank-4 {
+  background-color: var(--line);
+  color: var(--paper-dim);
+  font-weight: 700;
+}
+
+.top4-thumb {
+  width: 34px;
+  height: 46px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  background-color: #111;
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.top4-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.top4-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--paper);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top4-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--paper-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ai-comment-card {

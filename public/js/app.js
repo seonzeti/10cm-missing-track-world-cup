@@ -7,7 +7,8 @@ import {
   getCurrentPair,
   selectWinner,
   getProgress,
-  isFinished
+  isFinished,
+  getTop4
 } from './tournament.js';
 
 import {
@@ -25,6 +26,7 @@ let tournamentState = null;
 let isProcessingMatch = false;
 let lastResultPayload = null;
 let lastChampionId = null;
+let lastTop4 = null;
 
 // DOM Elements
 const screenStart = document.getElementById('screen-start');
@@ -194,13 +196,17 @@ async function handleSelectWinner(winnerId, selectedCardEl) {
 function onTournamentFinish() {
   isProcessingMatch = false;
   lastChampionId = tournamentState.championId;
+  lastTop4 = getTop4(tournamentState);
   const champion = candidateMap.get(lastChampionId);
 
-  // 결과 화면 데이터 바인딩
+  // 결과 화면 데이터 바인딩 (1위 우승곡)
   resultImage.src = champion?.image || '';
   resultImage.alt = champion?.title || '우승 무대';
   resultTitle.textContent = champion?.title || '';
   resultDesc.textContent = champion?.description || '';
+
+  // 1위 ~ 4위 최종 순위 리스트 바인딩
+  renderTop4List(lastTop4);
 
   // 저장 상태 초기화
   resultSaveStatus.textContent = '결과를 저장하는 중…';
@@ -217,6 +223,38 @@ function onTournamentFinish() {
   };
 
   submitSaveResult(lastResultPayload);
+}
+
+// 1위부터 4위까지 순위 렌더링
+function renderTop4List(top4) {
+  const container = document.getElementById('result-top4-list');
+  if (!container || !top4) return;
+  container.innerHTML = '';
+
+  const ranks = [
+    { rank: 1, label: '1위', badgeClass: 'top4-rank-1', id: top4.firstId, sub: '우승 무대 · CHAMPION' },
+    { rank: 2, label: '2위', badgeClass: 'top4-rank-2', id: top4.secondId, sub: '준우승 무대 · RUNNER-UP' },
+    { rank: 3, label: '3위', badgeClass: 'top4-rank-3', id: top4.thirdId, sub: '4강 진출 명곡 · SEMI-FINAL' },
+    { rank: 4, label: '4위', badgeClass: 'top4-rank-4', id: top4.fourthId, sub: '4강 진출 명곡 · SEMI-FINAL' }
+  ];
+
+  ranks.forEach((item) => {
+    if (!item.id) return;
+    const candidate = candidateMap.get(item.id);
+    if (!candidate) return;
+
+    const row = document.createElement('div');
+    row.className = 'top4-item';
+    row.innerHTML = `
+      <span class="top4-rank-badge ${item.badgeClass}">${item.label}</span>
+      <img class="top4-thumb" src="${candidate.image || ''}" alt="${candidate.title}" loading="lazy">
+      <div class="top4-info">
+        <span class="top4-name">${candidate.title}</span>
+        <span class="top4-sub">${item.sub}</span>
+      </div>
+    `;
+    container.appendChild(row);
+  });
 }
 
 // 결과 저장
@@ -251,7 +289,7 @@ async function downloadResultCard() {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     const width = 800;
-    const height = 1100;
+    const height = 1220;
     canvas.width = width;
     canvas.height = height;
 
@@ -311,10 +349,10 @@ async function downloadResultCard() {
       img.onerror = resolve;
     });
 
-    const imgW = 460;
-    const imgH = 580;
+    const imgW = 400;
+    const imgH = 480;
     const imgX = (width - imgW) / 2;
-    const imgY = m + 165;
+    const imgY = m + 155;
 
     ctx.drawImage(img, imgX, imgY, imgW, imgH);
     ctx.strokeStyle = '#3A3833';
@@ -323,18 +361,57 @@ async function downloadResultCard() {
 
     // 6. Title Box
     ctx.fillStyle = '#F4F2EC';
-    ctx.font = 'bold 36px sans-serif';
+    ctx.font = 'bold 30px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(champion.title, width / 2, imgY + imgH + 60);
+    ctx.fillText(champion.title, width / 2, imgY + imgH + 46);
 
-    ctx.fillStyle = '#A9A59C';
-    ctx.font = '18px sans-serif';
-    ctx.fillText('나의 최애 무대 월드컵 1위', width / 2, imgY + imgH + 95);
+    // 7. TOP 4 Podium Box
+    const c1 = candidateMap.get(lastTop4?.firstId);
+    const c2 = candidateMap.get(lastTop4?.secondId);
+    const c3 = candidateMap.get(lastTop4?.thirdId);
+    const c4 = candidateMap.get(lastTop4?.fourthId);
 
-    // 7. Footer
-    ctx.font = '14px monospace';
+    const podiumBoxY = imgY + imgH + 70;
+    const podiumBoxW = fw - 60;
+    const podiumBoxX = m + 30;
+    const podiumBoxH = 220;
+
+    ctx.fillStyle = '#0F0E0C';
+    ctx.fillRect(podiumBoxX, podiumBoxY, podiumBoxW, podiumBoxH);
+    ctx.strokeStyle = '#3A3833';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(podiumBoxX, podiumBoxY, podiumBoxW, podiumBoxH);
+
+    ctx.textAlign = 'left';
     ctx.fillStyle = '#E9E23A';
-    ctx.fillText('OLYMPIC HALL, SEOUL · FESTIVAL DE CENTINERS', width / 2, height - m - 30);
+    ctx.font = 'bold 12px monospace';
+    ctx.fillText('FINAL TOP 4 RANKING', podiumBoxX + 20, podiumBoxY + 28);
+
+    const rankingItems = [
+      { badge: '🥇 1위', text: c1 ? c1.title : champion.title, color: '#E9E23A' },
+      { badge: '🥈 2위', text: c2 ? c2.title : '준우승 무대', color: '#D4D0C5' },
+      { badge: '🥉 3위', text: c3 ? c3.title : '4강 진출곡', color: '#A77C5C' },
+      { badge: '   4위', text: c4 ? c4.title : '4강 진출곡', color: '#88847D' }
+    ];
+
+    rankingItems.forEach((item, idx) => {
+      const itemY = podiumBoxY + 62 + idx * 38;
+      ctx.fillStyle = item.color;
+      ctx.font = 'bold 15px sans-serif';
+      ctx.fillText(item.badge, podiumBoxX + 24, itemY);
+
+      ctx.fillStyle = '#F4F2EC';
+      ctx.font = '500 15px sans-serif';
+      let titleStr = item.text;
+      if (titleStr.length > 22) titleStr = titleStr.substring(0, 20) + '…';
+      ctx.fillText(titleStr, podiumBoxX + 110, itemY);
+    });
+
+    // 8. Footer
+    ctx.textAlign = 'center';
+    ctx.font = '13px monospace';
+    ctx.fillStyle = '#88847D';
+    ctx.fillText('OLYMPIC HALL, SEOUL · 10CM FAN CONCERT WORLD CUP', width / 2, height - m - 20);
 
     // Download Trigger
     const dataUrl = canvas.toDataURL('image/png');
@@ -353,11 +430,19 @@ async function downloadResultCard() {
 
 // SNS 공유하기
 async function handleShare() {
-  const champion = candidateMap.get(lastChampionId);
+  const c1 = candidateMap.get(lastTop4?.firstId);
+  const c2 = candidateMap.get(lastTop4?.secondId);
+  const c3 = candidateMap.get(lastTop4?.thirdId);
+  const c4 = candidateMap.get(lastTop4?.fourthId);
+
   const shareTitle = '10CM 팬콘 무대 월드컵 — THE MISSING TRACKS';
-  const shareText = champion
-    ? `[10CM 팬콘 무대 월드컵] 나의 최애 무대는 "${champion.title}"! 사라진 트랙들의 사건 기록을 확인해보세요.`
-    : '10CM 팬콘 무대 월드컵을 플레이해보세요!';
+  let shareText = '[10CM 팬콘 무대 월드컵 나의 TOP 4 무대]\n';
+  if (c1) shareText += `🥇 1위: ${c1.title}\n`;
+  if (c2) shareText += `🥈 2위: ${c2.title}\n`;
+  if (c3) shareText += `🥉 3위: ${c3.title}\n`;
+  if (c4) shareText += `4위: ${c4.title}\n`;
+  shareText += '\n사라진 트랙들의 사건 기록을 확인해보세요!';
+
   const shareUrl = window.location.origin;
 
   if (navigator.share) {
@@ -379,7 +464,7 @@ async function handleShare() {
   try {
     await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
     const originalText = btnShare.innerHTML;
-    btnShare.textContent = '링크가 복사되었어요!';
+    btnShare.textContent = '결과가 복사되었어요!';
     setTimeout(() => {
       btnShare.innerHTML = originalText;
     }, 2000);
